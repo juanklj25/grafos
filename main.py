@@ -1,36 +1,39 @@
-class Grafos_estados:
-    def __init__(self):
-        self.estados = [
-            "Acre", "Alagoas", "Amapá", "Amazonas", "Bahia", "Ceará", "Distrito Federal",
-            "Espírito Santo", "Goiás", "Maranhão", "Mato Grosso", "Mato Grosso do Sul",
-            "Minas Gerais", "Pará", "Paraíba", "Paraná", "Pernambuco", "Piauí",
-            "Rio de Janeiro", "Rio Grande do Norte", "Rio Grande do Sul", "Rondônia",
-            "Roraima", "Santa Catarina", "São Paulo", "Sergipe", "Tocantins"
-        ]
-        self.num_estados = len(self.estados)
-        self.matriz_adj = [[0] * self.num_estados for _ in range(self.num_estados)]
+def circulo_euriliano(grafo):
+    def remover(u, v):
+        grafo[u].remove(v)
+        grafo[v].remove(u)
 
-    def adicionar(self, estado1, estado2, distancia):
-        index_estado1 = self.estados.index(estado1)
-        index_estado2 = self.estados.index(estado2)
-        self.matriz_adj[index_estado1][index_estado2] = distancia
-        self.matriz_adj[index_estado2][index_estado1] = distancia
+    def encontrar_circuito(vertice_de_inicio):
+        acumulador = [vertice_de_inicio]
+        caminho = []
+        while acumulador:
+            u = acumulador[-1]
+            if grafo[u]:
+                v = grafo[u][0]
+                acumulador.append(v)
+                remover(u, v)
+            else:
+                caminho.append(acumulador.pop())
+        return caminho
 
-    def imprimir(self):
+    for vertex in grafo:
+        if len(grafo[vertex]) % 2 != 0:
+            return None
 
-        for estado in self.estados:
-            print(estado[:3].rjust(5), end="")
-        print()
-        for i in range(self.num_estados):
-            print(self.estados[i][:3].rjust(3), end="")
-            for j in range(self.num_estados):
-                print(str(self.matriz_adj[i][j]).rjust(5), end="")
-            print()
+    vertice_de_inicio = next(iter(grafo))
+    circulo = encontrar_circuito(vertice_de_inicio)
+    return circulo
 
-grafo_estados = Grafos_estados()
+grafo = {
+    0: [1, 2],
+    1: [0, 2],
+    2: [0, 1],
+    3: [0, 2]
+}
 
-grafo_estados.adicionar("Paraíba", "Pernambuco", 259)
-grafo_estados.adicionar("Pernambuco", "Piauí", 1126)
-grafo_estados.adicionar("Piauí", "Tocantins", 2407)
 
-grafo_estados.imprimir()
+circulo= circulo_euriliano(grafo)
+if circulo:
+    print("Circuito Euleriano encontrado:", circulo)
+else:
+    print("O grafo não é Euleriano")
